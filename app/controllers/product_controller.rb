@@ -14,10 +14,10 @@ class ProductController < ApplicationController
     render json: product.as_json
   end
 
-  def third_product_method
-    product = Product.third
+  def index
+    product = Product.all
 
-    def one_product_method
+    def show
       product = Product.find_by(id: params["id"])
       render json: product.as_json
     end
