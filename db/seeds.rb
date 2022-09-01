@@ -2,7 +2,7 @@ product = Product.new(
   name: "CarToy",
   price: 10,
   image_url: "toy",
-  description: "",
+  description: "Cool",
 )
 product.save
 
