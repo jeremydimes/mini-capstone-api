@@ -1,22 +1,51 @@
 class ProductsController < ApplicationController
+  before_action :authenticate_admin, except: [:index, :show]
+
   def index
-    product = Product.all
-    render json: product.as_json
+    @products = Product.all
+    render template: "products/index"
   end
 
   def create
-    product = Products.new(
-      name: "CarToy",
-      price: 10,
-      image_url: "toy",
-      description: "Cool",
+    product = Product.new(
+      name: params["name"],
+      price: params["price"],
+      image_url: params["image_url"],
+      description: params["description"],
     )
     product.save
-    render json: product.as_json
+    @product = product
+    
+    if @product.valid?
+      render template: "products/show"
+    else
+      render json: { message: "Hey, something went wrong!", errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
   def show
+    @product = Product.find_by(id: params[:id])
+    render template: "products/show"
+  end
+
+  def update
     product = Product.find_by(id: params["id"])
-    render json: product.as_json
+    product.name = params["name"] || product.name
+    product.price = params["price"] || product.price
+    product.image_url = params["image_url"] || product.image_url
+    product.description = params["desrciption"] || product.desrciption
+    product.save
+    @product = product
+    if @product.valid?
+      render template: "products/show"
+    else
+      render json: { message: "Hey, something went wrong!", errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    product = Product.find_by(id: params["id"])
+    product.destroy
+    render json: { message: "Product successfully destroyed!" }
   end
 end
